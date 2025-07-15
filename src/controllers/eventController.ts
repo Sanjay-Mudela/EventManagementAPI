@@ -45,7 +45,7 @@ export const getEventDetailsController = async (req: Request, res: Response) => 
 
 export const registerUserController = async (req: Request, res: Response) => {
   try {
-    const userId = Number(req.body.userId); // We'll pass it in body
+    const userId = Number(req.body.userId); 
     const eventId = Number(req.params.id);
 
     if (isNaN(userId) || isNaN(eventId)) {
@@ -72,7 +72,7 @@ export const registerUserController = async (req: Request, res: Response) => {
 
 export const cancelRegistrationController = async (req: Request, res: Response) => {
   try {
-    const userId = Number(req.body.userId); // we'll use body again
+    const userId = Number(req.body.userId); 
     const eventId = Number(req.params.id);
 
     if (isNaN(userId) || isNaN(eventId)) {
