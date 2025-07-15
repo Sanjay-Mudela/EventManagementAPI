@@ -1,0 +1,24 @@
+# Indicate that this is the root EditorConfig file
+root = true
+
+# Applies the following rules to all files
+[*]
+# Set the character encoding to UTF-8 (standard and widely compatible)
+charset = utf-8
+# Use 2 spaces for indentation (common in JS/TS projects)
+indent_size = 2
+# Use line feed (\n) as the line ending (standard across most OS environments)
+end_of_line = lf
+# Use spaces instead of tabs for indentation
+indent_style = space
+# Suggest wrapping lines at 150 characters (enforced via editor settings or formatters)
+max_line_length = 150
+# Ensure the file ends with a newline (helps avoid diff-related issues in version control)
+insert_final_newline = true
+# Automatically remove any whitespace at the end of lines
+trim_trailing_whitespace = true
+
+# For Markdown files (*.md)
+[*.{md}]
+# Allow trailing whitespace (used intentionally for formatting in Markdown)
+trim_trailing_whitespace = false
