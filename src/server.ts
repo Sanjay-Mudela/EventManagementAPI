@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import { pool } from './config/db';
 
 dotenv.config();
 
@@ -10,5 +11,14 @@ if (!PORT) throw new Error("Environment variable PORT is not defined. Please set
 
 app.use(express.json());
 
-app.get("/", (_req, res) => res.send("Event Management API is running..."));
+app.get('/', async (_req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()'); // Ask DB for current time
+    res.send(`Event Management API is running. DB time: ${result.rows[0].now}`);
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).send('Database connection failed');
+  }
+});
+
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
