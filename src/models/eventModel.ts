@@ -104,3 +104,24 @@ export const registerUser = async (userId: number, eventId: number) => {
 
   return { message: 'User registered successfully' };
 };
+
+
+export const cancelRegistration = async (userId: number, eventId: number) => {
+  // Check if user is registered
+  const check = await pool.query(
+    `SELECT * FROM registrations WHERE user_id = $1 AND event_id = $2`,
+    [userId, eventId]
+  );
+
+  if (check.rows.length === 0) {
+    throw new Error('User is not registered for this event');
+  }
+
+  // Delete the registration
+  await pool.query(
+    `DELETE FROM registrations WHERE user_id = $1 AND event_id = $2`,
+    [userId, eventId]
+  );
+
+  return { message: 'Registration cancelled successfully' };
+};
