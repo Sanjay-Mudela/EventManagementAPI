@@ -188,5 +188,4 @@ This project is open-source and available under the [MIT License](LICENSE).
 
 ## 🙋‍♂️ Author
 
-**Sanjay Mudela**  
-Built with ❤️ and TypeScript
+**Sanjay Mudela** 
