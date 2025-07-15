@@ -52,3 +52,55 @@ export const fetchEventDetails = async (eventId: number) => {
     registrations: registrationsResult.rows,
   };
 };
+
+
+export const registerUser = async (userId: number, eventId: number) => {
+  // 1. Check if event exists and is upcoming
+  const eventResult = await pool.query(
+    `SELECT capacity, event_date FROM events WHERE id = $1`,
+    [eventId]
+  );
+
+  if (eventResult.rows.length === 0) {
+    throw new Error('Event not found');
+  }
+
+  const { capacity, event_date } = eventResult.rows[0];
+
+  // 2. Check if event is in the past
+  if (new Date(event_date) < new Date()) {
+    throw new Error('Cannot register for past event');
+  }
+
+  // 3. Check current registration count
+  const regCountResult = await pool.query(
+    `SELECT COUNT(*) FROM registrations WHERE event_id = $1`,
+    [eventId]
+  );
+  const currentCount = Number(regCountResult.rows[0].count);
+
+  if (currentCount >= capacity) {
+    throw new Error('Event is full');
+  }
+
+  // 4. Check for duplicate registration
+  const exists = await pool.query(
+    `SELECT * FROM registrations WHERE user_id = $1 AND event_id = $2`,
+    [userId, eventId]
+  );
+
+  if (exists.rows.length > 0) {
+    throw new Error('User already registered for this event');
+  }
+
+  // 5. Register the user
+  await pool.query(
+    `
+    INSERT INTO registrations (user_id, event_id)
+    VALUES ($1, $2)
+    `,
+    [userId, eventId]
+  );
+
+  return { message: 'User registered successfully' };
+};
