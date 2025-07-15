@@ -160,3 +160,16 @@ export const getEventStats = async (eventId: number) => {
     usage_percent
   };
 };
+
+
+export const listUpcomingEvents = async () => {
+  const result = await pool.query(
+    `
+    SELECT * FROM events
+    WHERE event_date > NOW()
+    ORDER BY event_date ASC, location ASC
+    `
+  );
+
+  return result.rows;
+};

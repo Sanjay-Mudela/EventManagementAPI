@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEvent, fetchEventDetails, registerUser, cancelRegistration, getEventStats } from '../models/eventModel';
+import { createEvent, fetchEventDetails, registerUser, cancelRegistration, getEventStats, listUpcomingEvents } from '../models/eventModel';
 import { createEventSchema } from '../validators/eventValidators';
 
 
@@ -108,6 +108,17 @@ export const getEventStatsController = async (req: Request, res: Response) => {
       return res.status(404).json({ error: message });
     }
     console.error('Stats error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+export const listUpcomingEventsController = async (_req: Request, res: Response) => {
+  try {
+    const events = await listUpcomingEvents();
+    return res.json(events);
+  } catch (err) {
+    console.error('Upcoming event list error:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
