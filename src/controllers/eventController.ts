@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEvent, fetchEventDetails, registerUser, cancelRegistration } from '../models/eventModel';
+import { createEvent, fetchEventDetails, registerUser, cancelRegistration, getEventStats } from '../models/eventModel';
 import { createEventSchema } from '../validators/eventValidators';
 
 
@@ -87,6 +87,27 @@ export const cancelRegistrationController = async (req: Request, res: Response) 
       return res.status(400).json({ error: message });
     }
     console.error('Cancel error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+export const getEventStatsController = async (req: Request, res: Response) => {
+  try {
+    const eventId = Number(req.params.id);
+    if (isNaN(eventId)) {
+      return res.status(400).json({ error: 'Invalid event ID' });
+    }
+
+    const stats = await getEventStats(eventId);
+    return res.json(stats);
+  } catch (err: any) {
+    const message = err.message || 'Error';
+    if (message === 'Event not found') {
+      return res.status(404).json({ error: message });
+    }
+    console.error('Stats error:', err);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

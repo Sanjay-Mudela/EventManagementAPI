@@ -1,5 +1,5 @@
 import express from 'express';
-import { createEventController, getEventDetailsController, registerUserController, cancelRegistrationController } from '../controllers/eventController';
+import { createEventController, getEventDetailsController, registerUserController, cancelRegistrationController, getEventStatsController } from '../controllers/eventController';
 
 const router = express.Router();
 
@@ -10,5 +10,7 @@ router.get('/events/:id', getEventDetailsController);
 router.post('/events/:id/register', registerUserController);
 
 router.delete('/events/:id/register', cancelRegistrationController);
+
+router.get('/events/:id/stats', getEventStatsController);
 
 export default router;

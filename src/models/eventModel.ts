@@ -125,3 +125,38 @@ export const cancelRegistration = async (userId: number, eventId: number) => {
 
   return { message: 'Registration cancelled successfully' };
 };
+
+
+
+export const getEventStats = async (eventId: number) => {
+  // 1. Get event details
+  const eventResult = await pool.query(
+    `SELECT id, title, capacity FROM events WHERE id = $1`,
+    [eventId]
+  );
+
+  if (eventResult.rows.length === 0) {
+    throw new Error('Event not found');
+  }
+
+  const event = eventResult.rows[0];
+
+  // 2. Count registrations
+  const regResult = await pool.query(
+    `SELECT COUNT(*) FROM registrations WHERE event_id = $1`,
+    [eventId]
+  );
+
+  const registrations = Number(regResult.rows[0].count);
+  const seats_left = event.capacity - registrations;
+  const usage_percent = Math.floor((registrations / event.capacity) * 100);
+
+  return {
+    event_id: event.id,
+    title: event.title,
+    capacity: event.capacity,
+    registrations,
+    seats_left,
+    usage_percent
+  };
+};
