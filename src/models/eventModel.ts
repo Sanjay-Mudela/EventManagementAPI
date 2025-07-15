@@ -21,3 +21,34 @@ export const createEvent = async (event: CreateEventInput): Promise<number> => {
 
   return result.rows[0].id;
 };
+
+
+export const fetchEventDetails = async (eventId: number) => {
+  // Get event info
+  const eventResult = await pool.query(
+    `SELECT * FROM events WHERE id = $1`,
+    [eventId]
+  );
+
+  if (eventResult.rows.length === 0) {
+    return null; // Event not found
+  }
+
+  const event = eventResult.rows[0];
+
+  // Get registered users
+  const registrationsResult = await pool.query(
+    `
+    SELECT users.id, users.name, users.email
+    FROM users
+    JOIN registrations ON users.id = registrations.user_id
+    WHERE registrations.event_id = $1
+    `,
+    [eventId]
+  );
+
+  return {
+    ...event,
+    registrations: registrationsResult.rows,
+  };
+};
