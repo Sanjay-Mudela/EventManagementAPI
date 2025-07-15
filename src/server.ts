@@ -15,7 +15,7 @@ app.use('/api', eventRoutes);
 
 app.get('/', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT NOW()'); // Ask DB for current time
+    const result = await pool.query('SELECT NOW()'); 
     res.send(`Event Management API is running. DB time: ${result.rows[0].now}`);
   } catch (err) {
     console.error('Database error:', err);

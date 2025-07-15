@@ -15,6 +15,4 @@ router.delete('/events/:id/register', cancelRegistrationController);
 
 router.get('/events/:id/stats', getEventStatsController);
 
-
-
 export default router;
