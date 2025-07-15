@@ -7,8 +7,8 @@
   "description": "A robust and scalable Event Management RESTful API built with Node.js, Express, and PostgreSQL. This backend service allows organizers to create events and users to register or cancel registrations while enforcing smart business rules like capacity limits, duplicate prevention, and real-time validation.",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "start": "node dist/app.js"
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
@@ -17,6 +17,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "pg": "^8.16.3"
   }
