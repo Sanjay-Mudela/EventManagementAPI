@@ -1,106 +1,72 @@
 # 🎉 Event Management API
 
-A robust and scalable **Event Management RESTful API** built with **Node.js**, **Express**, **TypeScript**, and **PostgreSQL**. This backend service allows organizers to create events and users to register or cancel registrations while enforcing smart business rules like capacity limits, duplicate prevention, and real-time validation.
+A robust, modular, and production-ready **Event Management RESTful API** built using **Node.js**, **Express**, **TypeScript**, and **PostgreSQL**. This backend system handles event creation, user registrations, and enforces rules such as duplicate prevention, capacity checks, and date validations.
 
 ---
 
 ## 🚀 Features
 
-* 🔧 **Create Events** with validation on capacity and input types
-* 🧾 **Retrieve Event Details**, including full user registration list
-* ✅ **Register Users** for events with strict validation:
-  * No duplicate registrations
-  * Capacity enforcement (max 1000)
-  * No registrations for past events
-* ❌ **Cancel Registration** for users from an event
-* 📅 **List Upcoming Events**, sorted by:
-  * Closest date first
-  * Location (alphabetically for ties)
-* 📊 **Event Statistics** including:
-  * Total registrations
-  * Remaining capacity
-  * Percentage filled
+- 🔧 Create & List Events
+- 👥 User management (create, list)
+- ✅ Register & Cancel Event Registrations
+- ⚠️ Enforce event constraints:
+  - No past event registration
+  - Max capacity: 1000 users
+  - No duplicate registration
+  - Only allow cancellation if already registered
+- 📅 List Upcoming Events (sorted by date + location)
+- 📊 Event Stats (total registered, seats left, % filled)
+- 🧪 Zod input validation
+- 📂 Clean, modular structure
 
 ---
 
-## 🧠 Business Logic Highlights
+## 📁 Folder Structure
 
-* Many-to-Many relationship between Users and Events via `registrations` table
-* Prevents:
-  * Double registration
-  * Overbooking
-  * Registration for past events
-* Meaningful HTTP status codes and messages
-* Zod validation for all inputs
-* Efficient PostgreSQL queries
-* Safe parameterized queries (prevents SQL injection)
-* Ready for concurrent registration/cancellation
+```
+📦EventManagementAPI
+ ┣ 📁src
+ ┣  ┣ 📁config              # DB connection
+ ┣  ┣ 📁modules
+ ┣  ┣    ┣ 📁user           # User-related logic
+ ┣  ┣    ┣ 📁event          # Event-related logic
+ ┣  ┣    ┣ 📁registration   # Event registration logic
+ ┣  ┣ 📄server.ts           # Express server entry point
+ ┣
+ ┣ 📄.env.example
+ ┗ 📄README.md
+ 
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Backend**: Node.js, Express.js
-* **Language**: TypeScript
-* **Database**: PostgreSQL
-* **Database Access**: `pg` library (no ORM)
-* **Validation**: Zod
-* **Tools**: pgAdmin (for DB management), Postman (for testing), pnpm (for package management)
-
----
-
-## 📂 Project Structure
-
-```
-📦EventManagementAPI
- ┣ 📁src
-    ┣ 📁config
-    ┣ 📁controllers
-    ┣ 📁models
-    ┣ 📁routes
-    ┣ 📁validators
-    ┣ 📁middleware (optional)
- ┣ 📄server.ts
- ┣ 📄.env.example
- ┗ 📄README.md
- ┣ 📄.env.example
- ┗ 📄README.md
-```
+- **Node.js + Express**
+- **TypeScript**
+- **PostgreSQL** with `pg`
+- **Zod** for input validation
+- **pnpm** or `npm` for dependency management
 
 ---
 
 ## 🔧 Setup Instructions
 
-1. **Clone the repository**
-
+1. **Clone the Repository**
    ```bash
    git clone https://github.com/Sanjay-Mudela/EventManagementAPI.git
-   cd event-management-api
+   cd EventManagementAPI
    ```
 
-2. **Install dependencies**
-
+2. **Install Dependencies**
    ```bash
    pnpm install
+   # or
+   npm install
    ```
 
-3. **Create PostgreSQL database**
-
-   Create a database named `event_management` using pgAdmin or CLI.
-
-   ```sql
-   CREATE DATABASE event_management;
-   ```
-
-4. **Configure your `.env` file**
-
-   Create `.env` from the example:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Use the default values where applicable, or adjust them based on your setup:
+3. **Configure Environment Variables**
+   Create a `.env` file based on the `.env.example` file:
 
    ```env
    PORT=5000
@@ -111,83 +77,135 @@ A robust and scalable **Event Management RESTful API** built with **Node.js**, *
    DB_NAME=event_management
    ```
 
-5. **Start the development server**
+4. **Create the PostgreSQL Database**
+   Use pgAdmin or terminal to create a database named `event_management`.
 
+5. **Start the Server**
    ```bash
    pnpm run dev
+   # or
+   npm run dev
    ```
 
 ---
 
 ## 📬 API Endpoints
 
-### ➕ `POST /api/events`
-Create a new event  
-✅ Validates inputs using Zod, returns event ID on success
+### 👤 Users
 
-### 📄 `GET /api/events/:id`
-Fetch event details along with registered users
+* `POST /api/users/create` → Create a user  
+  **Body**:
+  ```json
+  {
+    "name": "Rohit Mishra",
+    "email": "rohit@example.com"
+  }
+  ```
 
-### 📝 `POST /api/events/:id/register`
-Register a user for an event  
-🚫 Fails if already registered, event is full, or event is in the past  
-```json
-{ "userId": 5 }
-```
-
-### ❌ `DELETE /api/events/:id/register`
-Cancel a user’s registration  
-⚠️ Error if the user wasn't registered  
-```json
-{ "userId": 5 }
-```
-
-### 📆 `GET /api/events/upcoming`
-Returns all upcoming events  
-🔃 Sorted by event date (ASC), then location (A–Z)
-
-### 📊 `GET /api/events/:id/stats`
-Returns event statistics:
-* Total Registrations
-* Remaining Capacity
-* % of capacity used
+* `GET /api/users/all` → Get all users
 
 ---
 
-## ✅ Example Response
+### 📅 Events
 
-```json
-{
-  "event_id": 1,
-  "title": "Tech Conference",
-  "capacity": 500,
-  "registrations": 120,
-  "seats_left": 380,
-  "usage_percent": 24
-}
+* `POST /api/events/create` → Create an event  
+  **Body**:
+  ```json
+  {
+    "title": "Tech Fest",
+    "eventDate": "2025-08-01",
+    "location": "Bangalore",
+    "capacity": 300
+  }
+  ```
+
+* `GET /api/events/upcoming` → Get upcoming events  
+* `GET /api/events/:id` → Get event details (with registered users)  
+* `GET /api/events/:id/stats` → Get event registration stats  
+
+---
+
+### 🎫 Registrations
+
+* `POST /api/registrations/register` → Register a user to an event  
+  **Body**:
+  ```json
+  {
+    "userId": 1,
+    "eventId": 2
+  }
+  ```
+
+* `DELETE /api/registrations/cancel` → Cancel a registration  
+  **Body**:
+  ```json
+  {
+    "userId": 1,
+    "eventId": 2
+  }
+  ```
+
+---
+
+## ⚠️ Business Rules Enforced
+
+* Cannot register for past events
+* Cannot register more than once for same event
+* Max 1000 capacity per event
+* Can only cancel if already registered
+
+---
+
+## 🔒 Input Validation
+
+Handled using **Zod schemas** in each module:
+
+* Users: name + valid email
+* Events: future date, string title/location, capacity 1–1000
+* Registrations: numeric userId and eventId
+
+---
+
+## ✅ Status Codes
+
+| Code | Meaning                   |
+|------|---------------------------|
+| 200  | OK                        |
+| 201  | Created                   |
+| 400  | Bad request / validation  |
+| 404  | Not found                 |
+| 409  | Conflict (e.g. duplicate) |
+| 500  | Internal server error     |
+
+---
+
+## 📦 Sample `.env.example`
+
+```env
+PORT=5000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_postgres_username
+DB_PASSWORD=your_postgres_password
+DB_NAME=event_management
 ```
 
 ---
 
-## 📌 HTTP Status Codes
-
-| Code | Meaning                    |
-|------|----------------------------|
-| 200  | OK                         |
-| 201  | Created                    |
-| 400  | Bad Request / Validation   |
-| 404  | Not Found                  |
-| 409  | Conflict (Duplicate Reg.)  |
-| 500  | Internal Server Error      |
-
----
-
-## 📃 License
+## 🧾 License
 
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-## 🙋‍♂️ Author
+## ✨ Author
 
-**Sanjay Mudela** 
+**Sanjay Mudela**  
+GitHub: [@Sanjay-Mudela](https://github.com/Sanjay-Mudela)
+
+---
+
+## 🎯 Status
+
+✅ Complete, tested, and production-ready.
+Use this as a base for a full-featured backend application with authentication and role-based access later.
