@@ -52,15 +52,17 @@ A robust and scalable **Event Management RESTful API** built with **Node.js**, *
 ## 📂 Project Structure
 
 ```
-📦event-management-api
- ┣ 📁config
- ┣ 📁controllers
- ┣ 📁models
- ┣ 📁routes
- ┣ 📁validators
- ┣ 📁utils (optional)
- ┣ 📁middleware (optional)
+📦EventManagementAPI
+ ┣ 📁src
+    ┣ 📁config
+    ┣ 📁controllers
+    ┣ 📁models
+    ┣ 📁routes
+    ┣ 📁validators
+    ┣ 📁middleware (optional)
  ┣ 📄server.ts
+ ┣ 📄.env.example
+ ┗ 📄README.md
  ┣ 📄.env.example
  ┗ 📄README.md
 ```
